@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.04';
+$VERSION = '5.05';
 
 =head1 NAME
 
@@ -188,7 +188,7 @@ sub OptSelect {
         $html .= ' selected="selected"' if($opt && $opt eq $item);
         $html .= ">$list->{$item}</option>";
     }
-    $html .= "</select>\n";
+    $html .= "</select>";
 
     return $html;
 }
