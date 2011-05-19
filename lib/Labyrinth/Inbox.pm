@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.05';
+$VERSION = '5.06';
 
 =head1 NAME
 
-Labyrinth::Inbox - Set of general Inbox Functions.
+Labyrinth::Inbox - Inbox handling Functions.
 
 =head1 SYNOPSIS
 
@@ -21,6 +21,13 @@ Labyrinth::Inbox - Set of general Inbox Functions.
 
 The Inbox package contains generic functions used for Inbox and Message
 handling.
+
+Currently the full functionality of this package is unused. It was originally
+developed to store updates for articles, news, events, etc that were submitted
+as part of the workflow process.
+
+At some point this will be reviewed and either deleted or reworked to better
+fit the workflow process.
 
 =head1 EXPORT
 

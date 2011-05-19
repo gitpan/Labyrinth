@@ -5,7 +5,7 @@ use strict;
 
 =head1 NAME
 
-Labyrinth::Plugins - plugin manager for Labyrinth
+Labyrinth::Plugins - Plugin Manager for Labyrinth
 
 =head1 SYNOPSIS
 
@@ -21,7 +21,7 @@ to quickly reference all the available plugins.
 =cut
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.05';
+$VERSION = '5.06';
 
 # -------------------------------------
 # Export Details

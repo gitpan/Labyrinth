@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.05';
+$VERSION = '5.06';
 
 =head1 NAME
 
@@ -30,8 +30,8 @@ Labyrinth::Audit - Set of general Audit Functions.
 
 =head1 DESCRIPTION
 
-The Audit package contains a number of variables and functions that are
-used across the system.
+The Audit package contains a number of variables and functions that can be
+used within the framework to provide error, debugging and trace information.
 
 =head1 EXPORT
 
@@ -164,11 +164,8 @@ sub LogRecord {
     my $audit = "<:$username> [$level] $mess";
 
     if($CALLER) {
-        my @calls = caller(1);
-        $audit .= " CALLER($calls[1],$calls[2])";
-        for my $i (2..5) {
-            @calls = caller($i);
-            last    unless(@calls);
+        my $i = 1;
+        while(my @calls = caller($i++)) {;
             $audit .= " => CALLER($calls[1],$calls[2])";
         }
     }

@@ -3,7 +3,7 @@ package Labyrinth::Phrasebook;
 use warnings;
 use strict;
 
-my $VERSION = '5.05';
+my $VERSION = '5.06';
 
 =head1 NAME
 
@@ -19,6 +19,8 @@ Labyrinth::Phrasebook - A phrasebook maintainer
 
 =head1 DESCRIPTION
 
+Using L<Data::Phrasebook>, this package acts as a simple wrapper for the 
+Labyrinth framework.
 
 =cut
 

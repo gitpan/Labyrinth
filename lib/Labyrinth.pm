@@ -3,7 +3,7 @@ package Labyrinth;
 use warnings;
 use strict;
 
-our $VERSION = '5.05';
+our $VERSION = '5.06';
 
 =head1 NAME
 
@@ -61,6 +61,8 @@ my %plugins;
 
 =item new()
 
+Instantiates the Labyrinth object.
+
 =back
 
 =cut
@@ -82,7 +84,8 @@ sub new {
 
 =item run
 
-run provides the interface between the CGI and the modules
+Provides the dispatch loop, instantiating any configuration required, then
+processes each command in turn, before finally publishing the result.
 
 =cut
 
@@ -188,12 +191,12 @@ LogDebug("run: layout=$tvars{layout}");
 LogDebug("run: content=$tvars{content}");
 LogDebug("run: loggedin=$tvars{loggedin}");
 
-    Publish();
+    return Publish();
 }
 
 =item load()
 
-Loads plugins found under the plugins directory.
+Loads plugins found within the plugin directory.
 
 =item action($action)
 

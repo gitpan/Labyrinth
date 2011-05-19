@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.05';
+$VERSION = '5.06';
 
 =head1 NAME
 
-Labyrinth::Support - library functionality for a specific installation.
+Labyrinth::Support - Common Function Library for Labyrinth.
 
 =head1 SYNOPSIS
 
@@ -16,7 +16,8 @@ Labyrinth::Support - library functionality for a specific installation.
 
 =head1 DESCRIPTION
 
-The functions contain herein are specific to the installation.
+The functions contain herein are commonly used throughout Labyrinth and 
+plugins.
 
 =head1 EXPORT
 
@@ -33,6 +34,8 @@ The functions contain herein are specific to the installation.
   AccessUser
   AccessGroup
   AccessSelect
+  AccessAllFolders 
+  AccessAllAreas
 
   RealmCheck
   RealmSelect
@@ -88,9 +91,17 @@ use Labyrinth::Variables;
 
 =item PublishState
 
+Returns the name of the current publish state, given the numeric state.
+
 =item PublishSelect
 
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+available publishing states.
+
 =item PublishAction
+
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+accessible publishing states.
 
 =cut
 
@@ -120,7 +131,7 @@ sub PublishAction {
     my $opt = shift ||  1;
     my $ack = shift || -1;
 
-    my $html = "<select name='publish'>";
+    my $html = qq{<select id="publish" name="publish">};
     foreach (sort keys %publishstates) {
         unless($ack == -1) {
             next    if(!$ack && $_ != $opt);
@@ -146,11 +157,12 @@ my @alignments = map {{'id'=>$_,'value'=> $alignments{$_}}} sort keys %alignment
 
 =item Alignment
 
-Returns the HTML block alignment selected.
+Returns the name of the current alignment state, given the numeric state.
 
 =item AlignSelect
 
-Returns the HTML for alignment selection dropdown list.
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+available alignment states.
 
 =cut
 
@@ -252,15 +264,27 @@ sub FieldCheck {
 
 =item AccessUser
 
+Returns whether the current user has access at the given level of permissions.
+Default permission level is ADMIN. Returns 1 if permission is granted, 0 
+otherwise.
+
 =item AccessGroup
+
+Returns whether the current user has access to the given group. Returns 1 if 
+yes, 0 otherwise.
 
 =item AccessSelect
 
-=item AccessAllAreas
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+available access states.
 
 =item AccessAllFolders
 
-=item AcessAllAreas
+Return list of folders current user has access to.
+
+=item AccessAllAreas
+
+Return list of areas current user has access to.
 
 =cut
 
@@ -277,7 +301,7 @@ sub AccessUser  {
 sub AccessGroup {
     my %hash = @_;
     my $groupid = $hash{ID} || GetGroupID($hash{NAME});
-    return 0    unless($groupid);   # this not bad access, the group may have been deleted
+    return 0    unless($groupid);   # this is not bad access, the group may have been deleted
 
     return 1    if UserInGroup($groupid);
 
@@ -302,7 +326,7 @@ sub AccessAllFolders {
     my @folders = map {$_->[0]} @rows;
     return join(',',@folders);
 }
-sub AcessAllAreas {
+sub AccessAllAreas {
     my @rows = $dbi->GetQuery('array','AllAreas');
     my @areas = map {"'$_->[0]'"} @rows;
     return join(',',@areas);
@@ -310,11 +334,20 @@ sub AcessAllAreas {
 
 =item RealmCheck
 
+Checks whether the given realm is known within the system.
+
 =item RealmSelect
+
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+available realms.
 
 =item RealmName
 
+Returns the name of a realm, given a realm id.
+
 =item RealmID
+
+Returns the id of a realm, given a realm name.
 
 =cut
 
@@ -348,7 +381,12 @@ sub RealmID {
 
 =item FolderName
 
+Returns the name of a folder, given a folder id.
+
 =item FolderSelect
+
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+available folders.
 
 =cut
 
@@ -366,6 +404,9 @@ sub FolderSelect {
 }
 
 =item AreaSelect
+
+Provides a dropdown selection box, as a XHTML code snippet, of the currently 
+available areas.
 
 =cut
 

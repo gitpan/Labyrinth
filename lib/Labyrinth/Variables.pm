@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.05';
+$VERSION = '5.06';
 
 =head1 NAME
 
@@ -65,11 +65,6 @@ require Exporter;
 
 @EXPORT_OK  = ( @{$EXPORT_TAGS{'all'}} );
 @EXPORT     = ( @{$EXPORT_TAGS{'all'}} );
-
-# -------------------------------------
-# Library Modules
-
-use CGI;
 
 # -------------------------------------
 # Variables
@@ -143,7 +138,15 @@ sub init {
     $settings{urlregex}   = $urlregex;
     $settings{emailregex} = $email;
 
-    $cgi = CGI->new();
+    $settings{'query-parser'} ||= 'CGI';
+    my $class = 'Labyrinth::Query::' . $settings{'query-parser'};
+
+    eval {
+        eval "CORE::require $class";
+        $cgi = $class->new();
+    };
+
+    die "Cannot load Query package for '$settings{'query-parser'}': $@" if($@);
 }
 
 =head2 CGI Parameter Handling
@@ -152,11 +155,14 @@ sub init {
 
 =item CGIArray($name)
 
-ParseParams only handles the scalar CGI parameters. In the event an array is
-required, CGIArray() is used to find and validate the parameter, before
-returning the list of values.
+ParseParams only handles the scalar interface (CGI) parameters. In the event 
+an array is required, CGIArray() is used to find and validate the parameter, 
+before returning the list of values.
 
 =item ParamsCheck
+
+Given a list of fields, checks whether the interface (CGI) parameters have 
+been set. Sets error conditions if any are missing.
 
 =back
 
@@ -184,9 +190,13 @@ sub ParamsCheck {
 
 =over
 
+=item SetError
+
+Sets the error condition as given.
+
 =item SetCommand
 
-=item SetError
+Set the next commmand to be run.
 
 =back
 

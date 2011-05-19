@@ -3,7 +3,7 @@ package Labyrinth::DIUtils::Base;
 use warnings;
 use strict;
 
-my $VERSION = '5.05';
+my $VERSION = '5.06';
 
 =head1 NAME
 
@@ -29,13 +29,13 @@ available, currently these are:
 
 =over
 
-=item * Labyrinth::DIUtils::GDDriver
+=item * Labyrinth::DIUtils::GD
 
 Uses GD graphics library.
 
-=item * Labyrinth::DIUtils::IMDriver
+=item * Labyrinth::DIUtils::ImageMagick
 
-Use ImageMagick image library.
+Uses ImageMagick image library.
 
 =back
 

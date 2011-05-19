@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.05';
+$VERSION = '5.06';
 
 =head1 NAME
 
-Labyrinth::IPAddr - Set of general IP Address checking Functions.
+Labyrinth::IPAddr - IP Address verification Functions.
 
 =head1 SYNOPSIS
 
@@ -20,9 +20,12 @@ Labyrinth::IPAddr - Set of general IP Address checking Functions.
 
 =head1 DESCRIPTION
 
-The IPAddr package contains generic functions used for validating known IP
+The IPAddr package contains generic functions used for verifying known IP
 addresses. Used to allow known safe address to use the site without hindrance
 and to refuse access to spammers.
+
+Eventually this may be rewritten as a memcached stand-alone application, to be
+used across multiple sites.
 
 =head1 EXPORT
 
