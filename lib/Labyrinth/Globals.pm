@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.08';
+$VERSION = '5.10';
 
 =head1 NAME
 
@@ -191,6 +191,13 @@ sub LoadSettings {
     }
     $cfg = undef;
 
+    SetLogFile( FILE   => $settings{'logfile'},
+                USER   => 'labyrinth',
+                LEVEL  => ($settings{'loglevel'} || 0),
+                CLEAR  => (defined $settings{'logclear'}  ? $settings{'logclear'}  : 1),
+                CALLER => (defined $settings{'logcaller'} ? $settings{'logcaller'} : 1)
+        );
+
     # evaluate standard path settings
     $settings{'protocol'}   = $protocol;
     $settings{'host'}       = $host;
@@ -216,6 +223,23 @@ sub LoadSettings {
         next    if $settings{$key} =~ m|^/|;
         $settings{$key} = File::Spec->rel2abs( $settings{$key} ) ;
     }
+
+    # path & title mappings
+    for my $map (qw(path title)) {
+        next    unless($settings{$map . 'maps'});
+        if( ref($settings{$map . 'maps'}) eq 'ARRAY') {
+            for(@{ $settings{$map . 'maps'} }) {
+                my ($name,$value) = split(/=/,$_,2);
+                $settings{$map . 'map'}{$name} = $value;
+            }
+        } elsif($settings{$map . 'maps'}) {
+            my ($name,$value) = split(/=/,$settings{$map . 'maps'},2);
+            $settings{$map . 'map'}{$name} = $value;
+        }
+    }
+
+#use Data::Dumper;
+#LogDebug("settings=".Dumper(\%settings));
 
     # set image processing driver, if specified
     Labyrinth::DIUtils::Tool($settings{diutils})    if($settings{diutils});
@@ -292,6 +316,8 @@ sub LoadRules {
     }
     $fh->close;
 
+#LogDebug("Constraints: rules=" . Dumper(\%rules));
+
     if($required_regex) {
         $required_regex =~ s/|$//;
         $rules{required_regexp} = qr/^$required_regex$/;
@@ -312,7 +338,7 @@ sub _constraint {
     if($constraint eq 'imagefile') {
         my %hash = (
             constraint_method => 'file_format',
-            params => [{mime_types => [qw!image/jpe image/jpg image/jpeg image/gif image/png!]}],
+            params => [mime_types => [qw!image/jpe image/jpg image/jpeg image/gif image/png!]],
         );
         return \%hash;
     } else {
@@ -441,7 +467,6 @@ sub ParseParams {
     my $results;
 
 #   LogDebug("rules=".Dumper(\%rules));
-#   LogDebug("env=".Dumper(\%cgi->env()));
 
     if(!defined $ENV{'SERVER_SOFTWARE'}) {  # commandline testing
         my $file = "$settings{'config'}/cgiparams.nfo";

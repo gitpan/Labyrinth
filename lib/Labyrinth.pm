@@ -3,7 +3,7 @@ package Labyrinth;
 use warnings;
 use strict;
 
-our $VERSION = '5.08';
+our $VERSION = '5.10';
 
 =head1 NAME
 
@@ -82,7 +82,7 @@ sub new {
 
 =over 4
 
-=item run
+=item run()
 
 Provides the dispatch loop, instantiating any configuration required, then
 processes each command in turn, before finally publishing the result.
@@ -100,12 +100,6 @@ sub run {
 
     UnPublish();                    # Start a fresh slate
     LoadSettings($file);            # Load All Global Settings
-
-    SetLogFile( FILE   => $settings{'logfile'},
-                USER   => 'labyrinth',
-                LEVEL  => ($settings{'loglevel'} || 0),
-                CLEAR  => 1,
-                CALLER => 1);
 
     MailSet(mailsend => $settings{mailsend}, logdir => $settings{logdir});
 

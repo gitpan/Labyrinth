@@ -1,5 +1,20 @@
 Changes for the Labyrinth Core
 
+5.10	31/12/2011
+	- fixed capturing require errors in DIUtils
+	- fixed passing args to D::FV::Constraints::Upload
+	- fixed file uploads in Media.
+	- fixed wrapper for Query::CGI.
+	- added File:Slurp as a prerequisite.
+
+5.09	25/06/2011 [unreleased]
+	- fix to Transform to correctly return content.
+	- fix to RSS.pm to use new Transform.
+	- fix to URL pattern match.
+	- added <label> as a valid tag to MLUtils.
+	- moved SetLogFile into Globals and allowed more settings.
+	- added titles to links, with the ability to provide user mappings.
+
 5.08	19/06/2011
 	- documentation updates.
 	- added url mapping for MetaCloud links.
