@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.10';
+$VERSION = '5.11';
 
 =head1 NAME
 
@@ -152,7 +152,11 @@ sub MonthSelect {
 sub YearSelect {
     my ($opt,$range,$blank,$dates) = @_;
     my $year = formatDate(1);
-    my ($past,$future) = (1980,$year+4);
+    
+    my $past_offset   = $settings{year_past_offset} || 0;
+    my $future_offset = defined $settings{year_future_offset} ? $settings{year_future_offset} : 4;
+    my $past   = $past_offset ? $year - $past_offset : $settings{year_past};
+    my $future = $year + $future_offset;
 
     my @range = ($past .. $future);
     if(defined $range) {

@@ -1,5 +1,9 @@
 Changes for the Labyrinth Core
 
+5.11	03/01/2012
+	- Media now allows more control for resizing thumbnails.
+	- DTUtils give more scope for configuring YearSelect.
+
 5.10	31/12/2011
 	- fixed capturing require errors in DIUtils
 	- fixed passing args to D::FV::Constraints::Upload
