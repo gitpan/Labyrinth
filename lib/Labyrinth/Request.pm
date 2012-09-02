@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::Request - Determines the actions and content required of a request.
+Labyrinth::Request - Request Manager for Labyrinth
 
 =head1 SYNOPSIS
 
@@ -82,6 +82,7 @@ sub new {
     my $self    = shift;
     my $realm   = shift;
     my $request = shift || 'home-'.$realm;
+    my @actions;
 
     ## split the reset request into it's component parts
     my ($section,$command) = split("-",$request);
@@ -94,7 +95,7 @@ sub new {
         = $self->_read_config('realm',$realm,@configkeys);
 
     $onsuccess = $request;
-    my @actions = split(",",$actions)   if($actions);
+    @actions = split(",",$actions)   if($actions);
 
     # create an attributes hash
     my $atts = {
@@ -339,7 +340,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

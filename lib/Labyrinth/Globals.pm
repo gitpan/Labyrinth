@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::Globals - Configuration and Parameter handling Functions.
+Labyrinth::Globals - Configuration and Parameter Handler for Labyrinth
 
 =head1 SYNOPSIS
 
@@ -427,8 +427,9 @@ sub DBConnect {
 sub _errors {
     my $err = shift;
     my $sql = shift;
+    my $message = '';
 
-    my $message = "$err<br />"              if($err);
+    $message  = "$err<br />"                if($err);
     $message .= "<br />SQL=$sql<br />"      if($sql);
     $message .= "ARGS=[".join(",",@_)."]"   if(@_);
 
@@ -471,10 +472,10 @@ sub ParseParams {
     if(!defined $ENV{'SERVER_SOFTWARE'}) {  # commandline testing
         my $file = "$settings{'config'}/cgiparams.nfo";
         if(-r $file) {
-            open FH, "$file"    or return;
+            my $fh = IO::File->new($file, 'r')  or return;
             my (%params,$params);
-            { local $/ = undef; $params = <FH>; }
-            close FH;
+            { local $/ = undef; $params = <$fh>; }
+            $fh->close;
             foreach my $param (split(/[\r\n]+/,$params)) {
                 my ($name,$value) = $param =~ /(\w+)=(.*)/;
                 next    unless($name);
@@ -553,7 +554,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

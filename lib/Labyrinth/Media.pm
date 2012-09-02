@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::Media - Media files handler for Labyrinth
+Labyrinth::Media - Media File Management for Labyrinth
 
 =head1 DESCRIPTION
 
@@ -658,7 +658,7 @@ sub UnZipFile {
         return;
     }
 
-    my @files = map {s!$settings{webdir}/!!;$_} File::Find::Rule->file()->name('*')->in("$settings{webdir}/$path");
+    my @files = map {my $x = $_; $x =~ s!$settings{webdir}/!!; $x} File::Find::Rule->file()->name('*')->in("$settings{webdir}/$path");
     unless(@files > 0) {
         LogError("UnZip failure: file=[$file], path=[$path], error: No files in archive.");
         rmtree("$settings{webdir}/$path");
@@ -698,7 +698,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::DBUtils - Standard Database Access Methods
+Labyrinth::DBUtils - Database Manager for Labyrinth
 
 =head1 SYNOPSIS
 
@@ -165,10 +165,11 @@ with undef.
 
 sub GetQuery {
     my ($dbv,$type,$key,@args) = @_;
+    my $hash;
 
     # retrieve the sql from the phrasebook,
     # inserting placeholders (if required)
-    my $hash = shift @args  if(ref($args[0]) eq "HASH");
+    $hash = shift @args  if(ref($args[0]) eq "HASH");
     my $sql = $dbv->{pb}->get($key,$hash);
     LogDebug("key=[$key], sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
 
@@ -231,14 +232,15 @@ with undef.
 
 sub Iterator {
     my ($dbv,$type,$key,@args) = @_;
+    my $hash;
 
     # retrieve the sql from the phrasebook,
     # inserting placeholders (if required)
-    my $hash = shift @args  if(ref($args[0]) eq "HASH");
+    $hash = shift @args  if(ref($args[0]) eq "HASH");
     my $sql = $dbv->{pb}->get($key,$hash);
     LogDebug("key=[$key], sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
 
-    return undef    unless($sql);
+    return  unless($sql);
 
     # if the object doesnt contain a reference to a dbh object
     # then we need to connect to the database
@@ -248,14 +250,14 @@ sub Iterator {
     my $sth = $dbv->{dbh}->prepare($sql);
     unless($sth) {
         LogError("err=".$dbv->{dbh}->errstr.", sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
-        return undef;
+        return;
     }
 
     # execute the SQL using any values sent to the function
     # to be placed in the sql
     if(!$sth->execute(@args)) {
         LogError("err=".$sth->errstr.", sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
-        return undef;
+        return;
     }
 
     # grab the data in the right way
@@ -290,10 +292,11 @@ with undef.
 
 sub DoQuery {
     my ($dbv,$key,@args) = @_;
+    my $hash;
 
     # retrieve the sql from the phrasebook,
     # inserting placeholders (if required)
-    my $hash = shift @args  if(ref($args[0]) eq "HASH");
+    $hash = shift @args  if(ref($args[0]) eq "HASH");
     my $sql = $dbv->{pb}->get($key,$hash);
 
     LogDebug("key=[$key], sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
@@ -318,10 +321,11 @@ with undef.
 
 sub IDQuery {
     my ($dbv,$key,@args) = @_;
+    my $hash;
 
     # retrieve the sql from the phrasebook,
     # inserting placeholders (if required)
-    my $hash = shift @args  if(ref($args[0]) eq "HASH");
+    $hash = shift @args  if(ref($args[0]) eq "HASH");
     my $sql = $dbv->{pb}->get($key,$hash);
 
     LogDebug("key=[$key], sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
@@ -372,14 +376,14 @@ sub _doQuery {
         my $sth = $dbv->{dbh}->prepare($sql);
         unless($sth) {
             LogError("err=".$dbv->{dbh}->errstr.", sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
-            return undef;
+            return;
         }
 
         # execute the SQL using any values sent to the function
         # to be placed in the sql
         if(!$sth->execute(@args)) {
             LogError("err=".$sth->errstr.", sql=[$sql], args[".join(",",map{$_ || ''} @args)."]");
-            return undef;
+            return;
         }
 
         if($dbv->{driver} =~ /mysql/i) {
@@ -415,7 +419,7 @@ according to the SQL rules.
 
 sub Quote {
     my $dbv  = shift;
-    return undef    unless($_[0]);
+    return  unless($_[0]);
 
     # Cant quote with DBD::CSV
     return $_[0]    if($dbv->{driver} =~ /csv/i);
@@ -526,7 +530,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

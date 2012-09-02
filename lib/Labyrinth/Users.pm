@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::Users - Generic User functions for Labyrinth
+Labyrinth::Users - Generic User Management for Labyrinth
 
 =head1 DESCRIPTION
 
@@ -157,8 +157,9 @@ sub UserSelect {
     my $blank = shift || 0;
     my $title = shift || 'Name';
     my $all   = shift;
+    my $search;
 
-    my $search = 'WHERE search=1'   unless($all);
+    $search = 'WHERE search=1'   unless($all);
 
     my @rows = $dbi->GetQuery('hash','AllUsers',{search=>$search});
     foreach (@rows) { $_->{name} = $_->{realname} . ( $_->{nickname} ? ' (' . $_->{nickname} . ')' : '') }
@@ -182,7 +183,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

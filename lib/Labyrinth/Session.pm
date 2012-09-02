@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
@@ -560,6 +560,7 @@ sub _get_session {
 
 sub _save_session {
     my @fields = @_;
+    my $session;
 
     LogDebug('SaveSession:1 fields=['.join('][',map {$_ || ''} @fields).']');
 
@@ -576,7 +577,7 @@ sub _save_session {
 
     LogDebug('SaveSession:2 fields=['.join('][',map {$_ || ''} @fields).']');
 
-    my $session = $main::Cookies{'sessionid'}   if (&GetCookies('sessionid'));
+    $session = $main::Cookies{'sessionid'}  if(GetCookies('sessionid'));
     if($session && $session ne 'expired') {
         # check the session has been recorded in case it's been reaped, a user
         # can relogin with the same session key
@@ -639,7 +640,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

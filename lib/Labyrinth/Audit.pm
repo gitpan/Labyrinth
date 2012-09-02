@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::Audit - Set of general Audit Functions.
+Labyrinth::Audit - Audit Handler for Labyrinth.
 
 =head1 SYNOPSIS
 
@@ -74,6 +74,7 @@ require Exporter;
 # -------------------------------------
 # Library Modules
 
+use IO::File;
 use Log::LogLite;
 
 # -------------------------------------
@@ -130,14 +131,14 @@ sub SetLogFile {
     return  unless($hash{FILE});
     return  unless($hash{USER});
 
-    if(!-e $hash{FILE}) { open FH, ">$hash{FILE}"; close FH }
+    if(!-e $hash{FILE}) { my $fh = IO::File->new("$hash{FILE}", 'w+'); $fh->close }
     return  unless(-w $hash{FILE});
 
     $username  = $hash{USER};
     $LOG_LEVEL = $hash{LEVEL}   if($hash{LEVEL});
     $CALLER    = 1              if($hash{CALLER});
 
-    if($hash{CLEAR}) { open FH, ">$hash{FILE}"; close FH }
+    if($hash{CLEAR}) { my $fh = IO::File->new("$hash{FILE}", 'w+'); $fh->close }
 
     $logfile = Log::LogLite->new($hash{FILE},$LOG_LEVEL);
     return  unless($logfile);
@@ -220,7 +221,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

@@ -4,11 +4,11 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.12';
+$VERSION = '5.13';
 
 =head1 NAME
 
-Labyrinth::Variables - General Variables used throughout the system.
+Labyrinth::Variables - Generic Variables for Labyrinth
 
 =head1 SYNOPSIS
 
@@ -65,6 +65,11 @@ require Exporter;
 
 @EXPORT_OK  = ( @{$EXPORT_TAGS{'all'}} );
 @EXPORT     = ( @{$EXPORT_TAGS{'all'}} );
+
+# -------------------------------------
+# Library Modules
+
+use Regexp::Assemble;
 
 # -------------------------------------
 # Variables
@@ -138,11 +143,21 @@ sub init {
     $settings{urlregex}   = $urlregex;
     $settings{emailregex} = $email;
 
+
+    $settings{crawler} = 0;
+    if($settings{crawlers}) {
+        my $ra = Regexp::Assemble->new;
+        $ra->add( '\b' . quotemeta( $_ ) . '\b' )   for(@{ $settings{crawlers} });
+        my $re = $ra->re;
+        $settings{crawler} = 1  if($ENV{'HTTP_USER_AGENT'} =~ $re);
+    }
+
+
     $settings{'query-parser'} ||= 'CGI';
     my $class = 'Labyrinth::Query::' . $settings{'query-parser'};
 
     eval {
-        eval "CORE::require $class";
+        require $class;
         $cgi = $class->new();
     };
 
@@ -227,7 +242,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or
