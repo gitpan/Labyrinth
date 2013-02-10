@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.13';
+$VERSION = '5.14';
 
 =head1 NAME
 
@@ -279,8 +279,7 @@ LogDebug("VerifyUser($userid)");
     $access = $rows[0]->{accessid};
     $tvars{user}{$_} = $rows[0]->{$_}   for(qw(realname nickname email));
 
-    #
-    my $folders = ($tvars{user}{folder} ? GetFolderIDs({id => $tvars{user}{folder}}) : 1);
+    my $folders = ($tvars{user}{folder} ? GetFolderIDs( id => $tvars{user}{folder} ) : 1);
     my $groups = GetGroupIDs($userid);
 
     # check folder permissions
@@ -324,19 +323,19 @@ Returns the list of folders the given user has access to.
 =cut
 
 sub GetFolderIDs {
-    my $hash = shift;
+    my %hash = @_;
     my $ref;
 
-    if($hash->{id}) {
-        my @rows = $dbi->GetQuery('hash','GetFolderRef',$hash->{id});
-        return ()   unless(@rows);
+    if($hash{id}) {
+        my @rows = $dbi->GetQuery('hash','GetFolderRef',$hash{id});
+        return '0'   unless(@rows);
         $ref = $rows[0]->{ref};
 
-    } elsif($hash->{ref}) {
-        $ref = $hash->{ref};
+    } elsif($hash{ref}) {
+        $ref = $hash{ref};
 
     } else {
-        return ();
+        return '0';
     }
 
     my @folders;
@@ -640,7 +639,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

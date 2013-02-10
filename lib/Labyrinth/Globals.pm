@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.13';
+$VERSION = '5.14';
 
 =head1 NAME
 
@@ -136,6 +136,7 @@ sub LoadAll {
 
 sub LoadSettings {
     my $settings = shift;
+    $settings ||= '';
 
     # default file names
     my $LOGFILE     = 'audit.log';
@@ -143,8 +144,8 @@ sub LoadSettings {
     my $PARSEFILE   = 'parserules.ini';
 
     # Server/HTTP values
-    my $host            = $ENV{'HTTP_HOST'};
-    my $ipaddr          = $ENV{'REMOTE_ADDR'};
+    my $host            = $ENV{'HTTP_HOST'}   || '';
+    my $ipaddr          = $ENV{'REMOTE_ADDR'} || '';
     my ($protocol)      = $ENV{'SERVER_PROTOCOL'}
                             ? ($ENV{'SERVER_PROTOCOL'} =~ m!^(.*)/!)
                             : $ENV{'SERVER_PORT'} && $ENV{'SERVER_PORT'} eq '443'
@@ -162,20 +163,12 @@ sub LoadSettings {
     # set defaults
     my ($cgipath,$webpath) = ($cgiroot,$docroot);
 
-    # load the configuration data
-    if(!-r $settings) {
-        LogError("Cannot read settings file [$settings]");
-        $tvars{errcode} = 'ERROR';
-        return;
-    }
-
+    # open configuration file
+    die "Cannot read settings file [$settings]\n"   if(!$settings || !-f $settings || !-r $settings);
     my $cfg = Config::IniFiles->new( -file => $settings );
-    unless(defined $cfg) {
-        LogError("Unable to load settings file [$settings]");
-        $tvars{errcode} = 'ERROR';
-        return;
-    }
+    die "Unable to load settings file [$settings]\n"    unless(defined $cfg);
 
+    # load the configuration data
     for my $sect ($cfg->Sections()) {
         for my $name ($cfg->Parameters($sect)) {
             my @value = $cfg->val($sect,$name);
@@ -251,8 +244,8 @@ sub LoadRules {
     return  if($settings{rulesloaded});
 
     # ensure we can access the rules file
-    my $rules = shift || $settings{'parsefile'};
-    die "Cannot read rules file [$rules]\n" if(!-r $rules);
+    my $rules = shift || $settings{'parsefile'} || '';
+    die "Cannot read rules file [$rules]\n" if(!$rules || !-f $rules || !-r $rules);
     my $fh = IO::File->new($rules, 'r');
     die "Cannot open rules file [$rules]: $!\n" unless(defined $fh);
 
@@ -554,7 +547,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

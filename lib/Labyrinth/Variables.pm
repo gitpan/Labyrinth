@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.13';
+$VERSION = '5.14';
 
 =head1 NAME
 
@@ -125,19 +125,19 @@ Prepares the standard variable values, so that they are only called once on setu
 =cut
 
 sub init {
-    my $prot     = qr{(?:http|https|ftp|afs|news|nntp|mid|cid|mailto|wais|prospero|telnet|gopher)://};
+    my $prot     = qr{(?:http|https|ftp|afs|news|nntp|mid|cid|mailto|wais|prospero|telnet|gopher|git)://};
     my $atom     = qr{[a-z\d]}i;
     my $domain   = qr{(?:(?:(?:$atom(?:(?:$atom|-)*$atom)?)\.)*(?:[a-zA-Z](?:(?:$atom|-)*$atom)?))};
     my $ip       = qr{(?:(?:\d+)(?:\.(?:\d+)){3})(?::(?:\d+))?};
     my $enc      = qr{%[a-fA-F\d]{2}};
     my $legal1   = qr{[a-zA-Z\d\$\-_.+!*\'(),~\#]};
     my $legal2   = qr{[\/;:@&=]};
-    my $legal3   = qr{(?:(?:(?:$legal1|$enc)|$legal2)*)};
-    my $path     = qr{\/$legal3(?:\/$legal3)*};
-    my $query    = qr{(?:\?$legal3)*};
+    my $legal3   = qr{(?:(?:(?:$legal1|$enc)|$legal2))};
+    my $path     = qr{\/$legal3(?:\/(?:$legal3)+)*};
+    my $query    = qr{(?:\?$legal3)+};
     my $local    = qr{[-\w\'=.]+};
 
-    my $urlregex = qr{(?:(?:$prot)?(?:$domain|$ip|$path)(?:(?:$path)?(?:$query)?)?)(?:\#[\w\-.]+)?};
+    my $urlregex = qr{(?: (?:$prot)?   (?:$domain|$ip|$path)  (?:(?:$path)?  (?:$query)?  )?)  (?:\#[\w\-.]+)?}x;
     my $email    = qr{$local\@(?:$domain|$ip)};
 
     $settings{urlregex}   = $urlregex;
@@ -157,7 +157,7 @@ sub init {
     my $class = 'Labyrinth::Query::' . $settings{'query-parser'};
 
     eval {
-        require $class;
+        eval "CORE::require $class";
         $cgi = $class->new();
     };
 
@@ -242,7 +242,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = '5.13';
+$VERSION = '5.14';
 
 =head1 NAME
 
@@ -70,10 +70,13 @@ my %binary = (
 
 my %knowntypes = (
     html            => 'text/html',
-    rss             => 'application/xml',
-    xml             => 'application/xml',
     ics             => 'text/calendar',
+    #js              => 'application/javascript',
+    js              => 'text/html',
+    json            => 'application/json',
+    rss             => 'application/xml',
     txt             => 'text/plain',
+    xml             => 'application/xml',
     yml             => 'text/yaml',
     yaml            => 'text/yaml'
 );
@@ -185,7 +188,12 @@ sub Publish {
 
     #LogDebug("<!-- $layout : $content -->");
 
-    my $output = $PARSER->parser($layout,$vars);
+    my $output;
+    eval { $output = $PARSER->parser($layout,$vars) };
+    if($@ || !$output) {
+        LogDebug( "template error=$@" );
+        $$output = $@;
+    }
 
     my ($ext) = $layout =~ m/\.(\w+)$/;
     $ext ||= 'html';
@@ -270,7 +278,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

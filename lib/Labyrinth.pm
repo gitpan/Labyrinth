@@ -3,7 +3,7 @@ package Labyrinth;
 use warnings;
 use strict;
 
-our $VERSION = '5.13';
+our $VERSION = '5.14';
 
 =head1 NAME
 
@@ -91,33 +91,38 @@ processes each command in turn, before finally publishing the result.
 
 sub run {
     my ($self,$file,%hash) = @_;
+    my ($user,$realm,$command,$request);
 
     my $LAYOUT = 'public/layout.html';
     my $default_realm = 'public';
     $default_realm = $hash{realm} if(%hash && $hash{realm});
 
-    Labyrinth::Variables::init();   # initial standard variable values
+    eval {
+        Labyrinth::Variables::init();   # initial standard variable values
 
-    UnPublish();                    # Start a fresh slate
-    LoadSettings($file);            # Load All Global Settings
+        UnPublish();                    # Start a fresh slate
+        LoadSettings($file);            # Load All Global Settings
 
-    MailSet(mailsend => $settings{mailsend}, logdir => $settings{logdir});
+        MailSet(mailsend => $settings{mailsend}, logdir => $settings{logdir});
 
-    ParseParams();
-    DBConnect();
+        ParseParams();
+        DBConnect();
 
-    ## defaults in the event of errors
-    $tvars{layout} = $LAYOUT;
-    $tvars{content} = '';
+        ## defaults in the event of errors
+        $tvars{layout} = $LAYOUT;
+        $tvars{content} = '';
 
-    ## session validation & the request
-    my $user    = ValidSession();
-    my $realm   = $user ? $user->realm : $default_realm;
-    my $command = $cgiparams{act};
-    my $request = Labyrinth::Request->new($realm,$command);
-    $tvars{realm} = $realm;
+        ## session validation & the request
+        $user    = ValidSession();
+        $realm   = $user ? $user->realm : $default_realm;
+        $command = $cgiparams{act};
+        $request = Labyrinth::Request->new($realm,$command);
+        $tvars{realm} = $realm;
 
-    $self->load;
+        $self->load;
+    };
+
+    die "Cannot start Labyrinth: $@\n"  if($@);
 
     ## 1. each request is only the start.
     ## 2. upon success or failure it is possible other commands will follow.
@@ -261,7 +266,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or
