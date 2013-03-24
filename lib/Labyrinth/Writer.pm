@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = '5.14';
+$VERSION = '5.15';
 
 =head1 NAME
 
@@ -234,7 +234,7 @@ sub UnPublish {
 }
 
 sub Transform {
-    my ($template,$vars) = @_;
+    my ($template,$vars,$file,$binary) = @_;
 
     my $path = $settings{'templates'};
     my $layout = "$path/$template";
@@ -242,6 +242,11 @@ sub Transform {
     die "Missing template [$layout]\n"  unless(-e $layout);
 
     Config()    unless($PARSER && $RENDER);
+
+    if($file) {
+        $PARSER->parse_to_file($layout,$vars,$file,$binary);
+        return;
+    }
 
     my $output = $PARSER->parser($layout,$vars);
     return $$output;

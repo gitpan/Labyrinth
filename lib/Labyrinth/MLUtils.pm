@@ -1,11 +1,11 @@
 package Labyrinth::MLUtils;
 
-use strict;
 use warnings;
+use strict;
 use utf8;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.14';
+$VERSION = '5.15';
 
 =head1 NAME
 
@@ -130,6 +130,13 @@ sub CleanTags {
     $text =~ s!\s+&\s+! &amp; !sg;
     $text =~ s!&[lr]squo;!&quot;!mg;
     $text =~ s{&(?!\#\d+;|[a-z0-9]+;)}{&amp;}sig;
+
+    # decode TinyMCE encodings
+    $text =~ s!&lt;(.*?)&gt;!<$1>!sig;
+
+    # clean paragraphs
+    $text =~ s!</p>\s+<p>!</p><p>!sig;
+    $text =~ s!\s*<br /><br />\s*!</p><p>!sig;
 
     my %tags = _buildtags();
     my @found = ($text =~ m!</?(\w+)(?:\s+[^>]*)?>!gm);
