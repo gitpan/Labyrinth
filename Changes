@@ -1,5 +1,18 @@
 Changes for the Labyrinth Core
 
+5.16    2013-04-28
+        - post-processing XHTML content before writing out is now optional, 
+          default is no post-processing. Use 'parsehtml' config setting 
+          (Writer).
+        - new 'parsetest' configuration setting to allow tests to determine
+          differences between original and post-processed content (Writer).
+        - added DumpToFile for parsetest functionality (Audit).
+        - fixed url validation (Variables).
+        - improvements to post-processing content (MLUtils).
+        - Enabled phrasebook caching to reduce disk I/O (Phrasebook).
+        - switched from Crypt::RandPasswd to Session::Token for password
+          generation for speed and efficiency (Users).
+
 5.15    2013-03-24
         - added INSTALL file.
         - rewrote README.

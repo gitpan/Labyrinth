@@ -3,7 +3,7 @@ package Labyrinth::Phrasebook;
 use warnings;
 use strict;
 
-my $VERSION = '5.15';
+my $VERSION = '5.16';
 
 =head1 NAME
 
@@ -33,6 +33,8 @@ use Labyrinth::Writer;
 
 # -------------------------------------
 # Variables
+
+my %pbcache;
 
 # -------------------------------------
 # The Public Interface Subs
@@ -103,6 +105,9 @@ entry doesn't exist in the current section.
 
 sub get {
     my ($self, $key, $hash) = @_;
+    my $crypt = join('', map { "$_=$hash->{$_}" } keys %$hash);
+
+    return $pbcache{$key}{$crypt}   if($pbcache{$key}{$crypt});
 
     my $val = $self->{pb}->fetch( $key, $hash );
     Croak("Unknown key phrase [$key]\n")    unless($val);
@@ -118,6 +123,7 @@ sub get {
 #    }
 
 #    $val =~ s/\$\w+//g; # remove unparsed parameters
+    $pbcache{$key}{$crypt} = $val;
     return $val;
 }
 

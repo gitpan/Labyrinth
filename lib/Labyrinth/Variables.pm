@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.15';
+$VERSION = '5.16';
 
 =head1 NAME
 
@@ -133,7 +133,7 @@ sub init {
     my $legal1   = qr{[a-zA-Z\d\$\-_.+!*\'(),~\#]};
     my $legal2   = qr{[\/;:@&=]};
     my $legal3   = qr{(?:(?:$legal1|$enc|$legal2)+)};
-    my $path     = qr{\/$legal3};
+    my $path     = qr{\/($legal3)?};
     my $query    = qr{(?:\?$legal3)+};
     my $local    = qr{[-\w\'=.]+};
 
