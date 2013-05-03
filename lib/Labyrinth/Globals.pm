@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.16';
+$VERSION = '5.17';
 
 =head1 NAME
 
@@ -76,6 +76,7 @@ use Labyrinth::Constraints;
 use Labyrinth::Constraints::Emails;
 use Labyrinth::DBUtils;
 use Labyrinth::DIUtils;
+use Labyrinth::Filters qw(float2 float3 float5);
 use Labyrinth::Variables;
 use Labyrinth::Writer;
 
@@ -254,6 +255,7 @@ sub LoadRules {
                                     Data::FormValidator::Constraints::Words
                                     Labyrinth::Constraints::Emails
                                     Labyrinth::Constraints
+                                    Labyrinth::Filters
                                )],
         filters => ['trim', demoroniser()],
         msgs => {prefix=> 'err_'},      # set a custom error prefix
@@ -503,6 +505,7 @@ sub ParseParams {
     }
 
     if($results) {
+#        LogDebug("results=".Dumper($results));
         my $values = $results->valid;
         %cgiparams = %$values;
         $values = $results->msgs;
