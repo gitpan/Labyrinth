@@ -1,5 +1,9 @@
 Changes for the Labyrinth Core
 
+5.18    2013-10-13
+        - removed Crypt::RandPasswd from prerequisites.
+        - added ResizeDimensions for displaying images (Media).
+
 5.17    2013-05-03
         - fixed &#x000; style entities (MLUtils).
         - added Filters.pm a DFV plugin for additional parameter validation.
