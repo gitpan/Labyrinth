@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.18';
+$VERSION = '5.19';
 
 =head1 NAME
 
@@ -60,6 +60,7 @@ require Exporter;
         PUBLIC USER EDITOR PUBLISHER ADMIN MASTER
         $dbi %cgiparams %tvars %settings $cgi
         CGIArray ParamsCheck SetError SetCommand
+        LoadProfiles LoadAccess
     ) ],
 );
 
@@ -69,6 +70,7 @@ require Exporter;
 # -------------------------------------
 # Library Modules
 
+use Config::IniFiles;
 use Regexp::Assemble;
 
 # -------------------------------------
@@ -133,7 +135,7 @@ sub init {
     my $legal1   = qr{[a-zA-Z\d\$\-_.+!*\'(),~\#]};
     my $legal2   = qr{[\/;:@&=]};
     my $legal3   = qr{(?:(?:$legal1|$enc|$legal2)+)};
-    my $path     = qr{\/($legal3)?};
+    my $path     = qr{\/(?:$legal3)?};
     my $query    = qr{(?:\?$legal3)+};
     my $local    = qr{[-\w\'=.]+};
 
@@ -227,6 +229,63 @@ sub SetCommand {
     $tvars{command} = shift;
 }
 
+=head2 Default Variable Loaders
+
+=over
+
+=item LoadProfiles
+
+Loads the permissions profiles, as stored in profiles config file.
+
+=item LoadAccess
+
+Loads the access permissions, as stored in the database.
+
+=back
+
+=cut
+
+sub LoadProfiles {
+    return  if(defined $settings{profiles});
+
+    # ensure we can access the profile file
+    if(!$settings{profile} || !-f $settings{profile} || !-r $settings{profile}) {
+        LogError("Cannot read profile file [$settings{profile}]");
+        $tvars{errcode} = 'ERROR';
+        return;
+    }
+
+    my $cfg = Config::IniFiles->new( -file => $settings{profile} );
+    unless(defined $cfg) {
+        LogError("Unable to load profile file [$settings{profile}]");
+        $tvars{errcode} = 'ERROR';
+        return;
+    }
+
+    # load the configuration data
+    my $value = $cfg->val('MAIN','default');
+    my @value = $cfg->val('MAIN','profiles');
+
+    $settings{profiles}{default} = $value;
+
+    for my $profile (@value) {
+        for my $name ($cfg->Parameters($profile)) {
+            $value = $cfg->val($profile,$name);
+            $settings{profiles}{profiles}{$profile}{$name} = $value;
+        }
+    }
+}
+
+sub LoadAccess {
+    return  if(defined $settings{access});
+
+    my @rows = $dbi->GetQuery('hash','AllAccess',9);
+    for my $row (@rows) {
+        $settings{access}{names}{$row->{accessname}} = $row->{accessid};
+        $settings{access}{ids}{$row->{accessid}}     = $row->{accessname};
+    }
+}
+
 1;
 
 __END__
@@ -242,7 +301,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2014 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

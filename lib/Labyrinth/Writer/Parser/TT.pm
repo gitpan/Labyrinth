@@ -3,7 +3,7 @@ package Labyrinth::Writer::Parser::TT;
 use warnings;
 use strict;
 
-my $VERSION = '5.18';
+my $VERSION = '5.19';
 
 =head1 NAME
 
@@ -88,7 +88,7 @@ sub parser {
 
     my $parser = Template->new($self->{config});        # initialise parser
     eval { $parser->process($layout,$vars,\$output) };
-    die $parser->error()    if($@ || !$output);
+    die "TT PARSER ERROR: " . $parser->error()    if($@ || !$output);
 
     return \$output;
 }
@@ -118,7 +118,7 @@ sub parse_to_file {
         }
     };
 
-    die "eval=$@, error=" . $parser->error  if($@);
+    die "TT PARSER ERROR: eval=$@, error=" . $parser->error  if($@);
 }
 
 1;
@@ -137,7 +137,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2014 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

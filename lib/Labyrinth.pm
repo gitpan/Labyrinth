@@ -3,7 +3,7 @@ package Labyrinth;
 use warnings;
 use strict;
 
-our $VERSION = '5.18';
+our $VERSION = '5.19';
 
 =head1 NAME
 
@@ -103,10 +103,12 @@ sub run {
         UnPublish();                    # Start a fresh slate
         LoadSettings($file);            # Load All Global Settings
 
+        die $tvars{errmess} if($tvars{errcode} eq 'ERROR');
+
         MailSet(mailsend => $settings{mailsend}, logdir => $settings{logdir});
 
-        ParseParams();
         DBConnect();
+        ParseParams();
 
         ## defaults in the event of errors
         $tvars{layout} = $LAYOUT;
@@ -266,7 +268,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2014 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

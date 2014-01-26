@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.18';
+$VERSION = '5.19';
 
 =head1 NAME
 
@@ -99,6 +99,7 @@ my %formats = (
     18 => 'DD/MM/YYYY hh:mm:ss',
     19 => 'DDEXT MONTH YYYY',
     20 => 'DABV, DD MABV YYYY hh:mm:ss',
+    21 => 'YYYY-MM-DD hh:mm:ss',
 );
 
 # decrees whether the date format above should be UTC
@@ -157,6 +158,7 @@ sub YearSelect {
     my $future_offset = defined $settings{year_future_offset} ? $settings{year_future_offset} : 4;
     my $past   = $past_offset ? $year - $past_offset : $settings{year_past};
     my $future = $year + $future_offset;
+    $past ||= $year;
 
     my @range = ($past .. $future);
     if(defined $range) {
@@ -284,8 +286,8 @@ sub unformatDate {
     my @basic  = qw(ss mm hh DD MM YYYY);
     my %forms  = map {$_ => 0 } @basic, 'dd';
 
-    my @fields = split(q![ ,/:]+!,$formats{$format});
-    my @values = split(q![ ,/:]+!,$time);
+    my @fields = split(q![ ,/:-]+!,$formats{$format});
+    my @values = split(q![ ,/:-]+!,$time);
     @forms{@fields} = @values;
     foreach (@basic) { $forms{$_} = int($forms{$_}) }
 
@@ -344,7 +346,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2014 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or

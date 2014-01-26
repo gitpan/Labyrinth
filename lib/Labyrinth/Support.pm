@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.18';
+$VERSION = '5.19';
 
 =head1 NAME
 
@@ -32,6 +32,9 @@ plugins.
   FieldCheck
   AuthorCheck
   MasterCheck
+
+  AccessName
+  AccessID
   AccessUser
   AccessGroup
   AccessSelect
@@ -43,7 +46,9 @@ plugins.
   RealmName
   RealmID
 
+  ProfileSelect
   FolderName
+  FolderID
   FolderSelect
   AreaSelect
 
@@ -60,10 +65,10 @@ require Exporter;
         AlignName AlignClass AlignSelect
         PublishState PublishSelect PublishAction
         FieldCheck AuthorCheck MasterCheck
-        AccessUser AccessGroup AccessSelect
+        AccessName AccessID AccessUser AccessGroup AccessSelect
         AccessAllFolders AccessAllAreas
         RealmCheck RealmSelect RealmName RealmID
-        FolderName FolderSelect AreaSelect
+        ProfileSelect FolderName FolderID FolderSelect AreaSelect
     ) ]
 );
 
@@ -273,6 +278,14 @@ sub FieldCheck {
     return($errors);
 }
 
+=item AccessName
+
+Returns the access permission name, given the access id.
+
+=item AccessID
+
+Returns the access id, given the access permission name.
+
 =item AccessUser
 
 Returns whether the current user has access at the given level of permissions.
@@ -298,6 +311,18 @@ Return list of folders current user has access to.
 Return list of areas current user has access to.
 
 =cut
+
+sub AccessName  {
+    my $value = shift;
+    LoadAccess();
+    return $settings{access}{ids}{$value};
+}
+
+sub AccessID  {
+    my $value = shift;
+    LoadAccess();
+    return $settings{access}{names}{$value};
+}
 
 sub AccessUser  {
     my $permission = shift;
@@ -337,6 +362,7 @@ sub AccessAllFolders {
     my @folders = map {$_->[0]} @rows;
     return join(',',@folders);
 }
+
 sub AccessAllAreas {
     my @rows = $dbi->GetQuery('array','AllAreas');
     my @areas = map {"'$_->[0]'"} @rows;
@@ -390,6 +416,14 @@ sub RealmID {
     return $rows[0]->{realmid};
 }
 
+=item ProfileSelect
+
+Returns a dropdown list for the current list of profiles.
+
+=item FolderID
+
+Returns the folder id, given the folder name.
+
 =item FolderName
 
 Returns the name of a folder, given a folder id.
@@ -401,6 +435,22 @@ available folders.
 
 =cut
 
+sub ProfileSelect {
+    my $opt  = shift || 0;
+    my $name = shift || 'profile';
+    LoadProfiles();
+    my @rows = map { { profile => $_ } } sort grep {$_ ne $settings{profiles}{default} } keys %{$settings{profiles}{profiles}};
+    unshift @rows, { profile => $settings{profiles}{default} }  if($settings{profiles}{default});
+    unshift @rows, { profile => 'Select Profile' };
+    DropDownRows($opt,$name,'profile','profile',@rows);
+}
+
+sub FolderID {
+    my $opt  = shift || return;
+    my @rows = $dbi->GetQuery('hash','GetFolderByPath',$opt);
+    return @rows ? $rows[0]->{folderid} : undef;
+}
+
 sub FolderName {
     my $opt  = shift || return;
     my @rows = $dbi->GetQuery('hash','GetFolder',$opt);
@@ -409,9 +459,9 @@ sub FolderName {
 
 sub FolderSelect {
     my $opt  = shift || 0;
-    my $name = shift || 'accessid';
+    my $name = shift || 'folderid';
     my @rows = $dbi->GetQuery('hash','AllFolders');
-    DropDownRows($opt,'folderid','folderid','foldername',@rows);
+    DropDownRows($opt,$name,'folderid','foldername',@rows);
 }
 
 =item AreaSelect
@@ -445,7 +495,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2013 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2014 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or
