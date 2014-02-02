@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.19';
+$VERSION = '5.20';
 
 =head1 NAME
 
@@ -257,7 +257,7 @@ sub LoadProfiles {
 
     my $cfg = Config::IniFiles->new( -file => $settings{profile} );
     unless(defined $cfg) {
-        LogError("Unable to load profile file [$settings{profile}]");
+        LogError("Unable to load profile file [$settings{profile}]: @Config::IniFiles::errors");
         $tvars{errcode} = 'ERROR';
         return;
     }

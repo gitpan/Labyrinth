@@ -3,7 +3,7 @@ package Labyrinth::Writer::Parser::TT;
 use warnings;
 use strict;
 
-my $VERSION = '5.19';
+my $VERSION = '5.20';
 
 =head1 NAME
 
@@ -83,7 +83,7 @@ sub parser {
 #    LogDebug( "vars=".Dumper($vars) );
 
     $self->{config}{INCLUDE_PATH} = $path;
-    $self->{config}{EVAL_PERL}    = ($vars->{evalperl} ? 1 : 0);
+    $self->{config}{EVAL_PERL}    = ($settings{evalperl} || $vars->{evalperl} ? 1 : 0);
     $self->{config}{OUTPUT_PATH}  = $vars->{cache};
 
     my $parser = Template->new($self->{config});        # initialise parser

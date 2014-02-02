@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.19';
+$VERSION = '5.20';
 
 =head1 NAME
 
@@ -276,16 +276,16 @@ LogDebug("VerifyUser($userid,'$folder')");
         if($folderaccess{$userid}{$folder});
 
     # check base access
-    my @rows = $dbi->GetQuery('hash','GetUserByID',$userid);
-    $access = $rows[0]->{accessid};
-    $tvars{user}{$_} = $rows[0]->{$_}   for(qw(realname nickname email));
+    my $user = GetUser($userid);
+    $access = $user->{accessid};
+    $tvars{user}{$_} = $user->{$_}   for(qw(realname nickname email));
 
     my @folders = ($folder ? GetFolderIDs( ref => $folder ) : (1));
     my $folders = join(',',grep {$_} @folders);
     my $groups = GetGroupIDs($userid);
 
     # check folder permissions
-    @rows = $dbi->GetQuery('hash','GetPermission',{folders=>$folders,groups=>$groups,user=>$userid});
+    my @rows = $dbi->GetQuery('hash','GetPermission',{folders=>$folders,groups=>$groups,user=>$userid});
     foreach my $rec (@rows) {
         $access = $rec->{accessid}  if($access < $rec->{accessid});
     }

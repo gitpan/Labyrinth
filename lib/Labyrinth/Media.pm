@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.19';
+$VERSION = '5.20';
 
 =head1 NAME
 
@@ -387,6 +387,8 @@ sub SaveImageFile {
         $i->reduce($xmax,$ymax);
     };
 
+    LogDebug("error reducing '$settings{webdir}/$filename': $@")    if($@);
+
     my ($size_x,$size_y) = imgsize("$settings{webdir}/$filename");
 
     $imageid = SaveImage(
@@ -474,8 +476,8 @@ sub GetGravatar {
     my $nophoto = uri_escape($settings{nophoto});
 
     return $nophoto     unless($id);
-    my @rows = $dbi->GetQuery('hash','GetUserByID',$id);
-    return $nophoto     unless(@rows);
+    my $user = GetUser($id);
+    return $nophoto     unless($user);
 
     return
         'http://www.gravatar.com/avatar.php?'
