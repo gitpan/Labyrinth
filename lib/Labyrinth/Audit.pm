@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.20';
+$VERSION = '5.21';
 
 =head1 NAME
 
@@ -149,8 +149,8 @@ sub SetLogFile {
     return  unless($hash{FILE});
     return  unless($hash{USER});
 
-    if(!-e $hash{FILE}) { my $fh = IO::File->new("$hash{FILE}", 'w+'); $fh->close }
-    return  unless(-w $hash{FILE});
+    eval { if(!-e $hash{FILE}) { my $fh = IO::File->new("$hash{FILE}", 'w+'); $fh->close } };
+    return  if($@ || ! -w $hash{FILE});
 
     $username  = $hash{USER};
     $LOG_LEVEL = $hash{LEVEL}   if($hash{LEVEL});

@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = '5.20';
+$VERSION = '5.21';
 
 =head1 NAME
 
@@ -222,6 +222,7 @@ sub Publish {
         $mime->type || 'text/html';
     };
 
+    $tvars{headers}{'charset'}    = 'utf-8';
     $tvars{headers}{'status'}     = '404 Page Not Found'    if($content eq $codes{BADPAGE} || $content eq $codes{BADCMD});
     $tvars{headers}{'cookie'}     = $tvars{cookie}          if($tvars{cookie});
     $tvars{headers}{'attachment'} = basename($content)      if($layout =~ /\.ics$/);

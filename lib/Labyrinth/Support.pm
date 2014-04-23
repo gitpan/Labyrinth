@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.20';
+$VERSION = '5.21';
 
 =head1 NAME
 
@@ -210,7 +210,9 @@ sub AuthorCheck {
         $permission = ADMIN unless(defined $permission);
 
         my @rows = $dbi->GetQuery('hash',$key,$cgiparams{$id});
-        $tvars{data}->{$_} = $rows[0]->{$_} for(keys %{$rows[0]});
+        return 0    unless(@rows);
+
+        $tvars{data}{$_} = $rows[0]->{$_} for(keys %{$rows[0]});
 
         return 1    if(Authorised($permission));
         return 1    if($rows[0]->{userid} && $rows[0]->{userid} == $tvars{'loginid'});
