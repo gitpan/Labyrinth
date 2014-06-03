@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = '5.21';
+$VERSION = '5.22';
 
 =head1 NAME
 
@@ -50,7 +50,7 @@ L<Labyrinth::Request> distribution.
 use Config::IniFiles;
 
 use Labyrinth::Audit;
-use Labyrinth::Globals  qw(:default);
+use Labyrinth::Globals;
 use Labyrinth::Variables;
 use Labyrinth::Writer;
 

@@ -3,7 +3,8 @@ package Labyrinth::Plugin::Base;
 use warnings;
 use strict;
 
-my $VERSION = '5.21';
+use vars qw($VERSION);
+$VERSION = '5.22';
 
 =head1 NAME
 
@@ -18,7 +19,7 @@ Contains all the admin handling functionality for a simple plugin.
 # -------------------------------------
 # Library Modules
 
-use Labyrinth::Globals  qw(:default);
+use Labyrinth::Globals;
 use Labyrinth::DBUtils;
 use Labyrinth::Session;
 use Labyrinth::Support;

@@ -5,7 +5,7 @@ use strict;
 use utf8;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.21';
+$VERSION = '5.22';
 
 =head1 NAME
 
@@ -179,6 +179,11 @@ sub SafeHTML {
 sub CleanLink {
     my $text = shift;
     return ''   unless($text);
+
+    # remove embedded script tags
+    $text =~ s!<script.*?/script>!!gis; # open and close script tags
+    $text =~ s!<script.*!!gis;          # open, but no close, remove to the end of string
+    $text =~ s!.*/script>!!gis;         # close, but on open, removed from te beginning of string
 
     # remove anything that looks like a link
     $text =~ s!https?://[^\s]*!!gis;
