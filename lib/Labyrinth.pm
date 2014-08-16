@@ -3,7 +3,7 @@ package Labyrinth;
 use warnings;
 use strict;
 
-our $VERSION = '5.23';
+our $VERSION = '5.24';
 
 =head1 NAME
 
@@ -96,6 +96,8 @@ sub run {
     my $LAYOUT = 'public/layout.html';
     my $default_realm = 'public';
     $default_realm = $hash{realm} if(%hash && $hash{realm});
+
+    $tvars{errcode} = '';
 
     eval {
         Labyrinth::Variables::init();   # initial standard variable values

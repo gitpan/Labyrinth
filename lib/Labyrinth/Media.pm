@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.23';
+$VERSION = '5.24';
 
 =head1 NAME
 
@@ -69,6 +69,7 @@ use Labyrinth::Metadata;
 use Labyrinth::MLUtils;
 use Labyrinth::Plugins;
 use Labyrinth::Support;
+use Labyrinth::Users;
 use Labyrinth::Variables;
 
 # -------------------------------------

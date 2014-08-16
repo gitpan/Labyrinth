@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.23';
+$VERSION = '5.24';
 
 =head1 NAME
 
@@ -233,6 +233,7 @@ sub formatDate {
 
     my ($second,$minute,$hour,$day,$mon,$year,$dotw) = localtime($time);
     $year += 1900;
+    $mon++;
 
     if($now && $zonetime{$format}) {
         my $timezone = $settings{timezone} || 'Europe/London';
