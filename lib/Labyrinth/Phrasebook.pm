@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '5.24';
+$VERSION = '5.25';
 
 =head1 NAME
 
@@ -106,7 +106,7 @@ entry doesn't exist in the current section.
 
 sub get {
     my ($self, $key, $hash) = @_;
-    my $crypt = join('', map { "$_=$hash->{$_}" } keys %$hash);
+    my $crypt = join('', map { "$_=$hash->{$_}" } grep {$hash->{$_}} keys %$hash);
 
     return $pbcache{$key}{$crypt}   if($pbcache{$key}{$crypt});
 

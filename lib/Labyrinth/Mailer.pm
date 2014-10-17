@@ -5,7 +5,7 @@ use strict;
 use utf8;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.24';
+$VERSION = '5.25';
 
 =head1 NAME
 
@@ -37,13 +37,13 @@ require Exporter;
 # -------------------------------------
 # Library Modules
 
+use File::Basename;
 use HTML::Entities;
 use IO::File;
-use Text::Wrap;
 use MIME::Lite;
 use MIME::Lite::TT::HTML;
 use MIME::Types;
-use File::Basename;
+use Text::Wrap;
 
 use Labyrinth::Audit;
 use Labyrinth::Writer;

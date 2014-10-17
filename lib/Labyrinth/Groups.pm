@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.24';
+$VERSION = '5.25';
 
 =head1 NAME
 
@@ -25,7 +25,7 @@ require Exporter;
 @ISA = qw(Exporter);
 
 %EXPORT_TAGS = (
-    'all' => [ qw( GetGroupID UserInGroup GroupSelect GroupSelectMulti ) ]
+    'all' => [ qw( GetGroupID UserInGroup UserGroups GroupSelect GroupSelectMulti ) ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -43,6 +43,11 @@ use Labyrinth::Support;
 use Labyrinth::Variables;
 
 # -------------------------------------
+# Variables
+
+my %InGroup;
+
+# -------------------------------------
 # The Subs
 
 =head1 FUNCTIONS
@@ -57,6 +62,10 @@ Returns the ID of the specific group.
 
 Checks whether the specified user (or current user) is in the specified group
 Returns 1 if true, otherwise 0 for false.
+
+=item UserGroups()
+
+For the current user login, return the list of groups they are associated with.
 
 =item GroupSelect([$opt])
 
@@ -73,22 +82,47 @@ number of rows you require.
 =cut
 
 sub GetGroupID {
-    my $name = shift;
+    my $name = shift || return;
     my @rows = $dbi->GetQuery('array','GetGroupID',$name);
     return  unless(@rows);
     return $rows[0]->[0];
 }
 
-my %InGroup;
-
 sub UserInGroup {
-    my $groupid = shift;
+    my $groupid = shift || return;
     my $userid  = shift || $tvars{loginid};
     return 0    unless($groupid && $userid);
 
     $InGroup{$userid} ||= do { UserGroups($userid) };
     return 1    if($InGroup{$userid} =~ /\b$groupid\b/);
     return 0;
+}
+
+sub UserGroups {
+    my $userid  = shift || $tvars{loginid};
+    my (%groups,@grps);
+    my @rows = $dbi->GetQuery('hash','AllGroupIndex');
+    foreach (@rows) {
+        # a user link, but not our user
+        next    if($_->{type} == 1 && $_->{linkid} ne $userid);
+        
+        if($_->{type} == 1) {
+            push @grps, $_->{groupid};
+        } else {
+            push @{$groups{$_->{linkid}}}, $_->{groupid};
+        }
+    }
+    my @list = ();
+    while(@grps) {
+        my $g = shift @grps;
+        push @list, $g;
+        next    unless($groups{$g});
+        push @grps, @{$groups{$g}};
+        delete $groups{$g};
+    }
+    my %hash = map {$_ => 1} @list;
+    my $grps = join(",",keys %hash);
+    return $grps;
 }
 
 sub GroupSelect {

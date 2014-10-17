@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.24';
+$VERSION = '5.25';
 
 =head1 NAME
 
@@ -56,6 +56,7 @@ use Labyrinth::DBUtils;
 use Labyrinth::Variables;
 
 use JSON::XS;
+use URI::Escape;
 use WWW::Mechanize;
 
 # -------------------------------------
@@ -107,6 +108,8 @@ sub BlockIP {
     } else {
         $dbi->DoQuery('AddIPAddress',$who,1,$ipaddr);
     }
+
+    return 1;
 }
 
 =item AllowIP
@@ -129,10 +132,13 @@ sub AllowIP {
     } else {
         $dbi->DoQuery('AddIPAddress',$who,2,$ipaddr);
     }
+
+    return 1;
 }
 
 sub _request {
-    my $url = join('/',@_);
+    my $url = shift;
+    $url .= '/' . join('/', map { uri_escape_utf8($_) } @_);
 
     my $mech = WWW::Mechanize->new();
     $mech->get($url);

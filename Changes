@@ -1,6 +1,21 @@
 Changes for the Labyrinth Core
 ==============================
 
+5.25    2014-10-17
+        - fixed license fields in META.json to be lists.
+        - escape characters before sending URL request (IPAddr).
+        - enable both types of filters to be called via AUTOLOAD (Filters).
+        - added missing pre-requisite.
+        - moved UserGroups from Plugin::Groups to Core (Groups).
+        - provide consistent return values (Groups, IPAddr).
+        - reworked CSS creation to allow hashes and arrays of attributes. Now
+          use HTML::Entities to (un)escape characters (MLUtils).
+        - colours can be 3 characters as well as 6 (MLUtils).
+        - reworked url regex (Variables).
+        - more options for password validation (Users).
+        - added field name for user select (Users).
+        - extended functional test suite.
+
 5.24    2014-08-16
         - added InternalLogin (Session) to enable authenticated logins.
         - set error code to an empty value before each request (Labyrinth).
@@ -21,7 +36,7 @@ Changes for the Labyrinth Core
         - added full version checks in META tests.
 
 5.21    2014-04-23
-        - CPAN Testers Reports from Chris WIlliams identified a very odd error
+        - CPAN Testers Reports from Chris Williams identified a very odd error
           with the installed versions of File::Temp and File::Path. Specifying
           versions of both in pre-requisites to ensure known working copies
           are installed.
