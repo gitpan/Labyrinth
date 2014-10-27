@@ -25,8 +25,8 @@ plan 'no_plan';
 my $td;
 if($td = Test::Database->handle( 'mysql' )) {
     create_mysql_databases($td);
-} elsif($td = Test::Database->handle( 'SQLite' )) {
-    create_sqlite_databases($td);
+#} elsif($td = Test::Database->handle( 'SQLite' )) {
+#    create_sqlite_databases($td);
 }
 
 SKIP: {
@@ -68,7 +68,7 @@ SKIP: {
     is(MetaSearch( 'keys' => ['Image'], 'meta' => ['jodrell'] ),0);
     is(MetaSearch( 'keys' => ['Image'], 'meta' => ['jodrell'], full => 1 ),1);
 
-    my @search = MetaSearch( 'keys' => ['Image'], 'meta' => ['cheshire'], sort => 'desc' );
+    my @search = MetaSearch( 'keys' => ['Image'], 'meta' => ['cheshire'], sort => 'desc', order => 'tag' );
     is($search[0]->{tag},'joy division');
     is($search[1]->{tag},'jodrell bank');
     @search = MetaSearch( 'keys' => ['Image'], 'meta' => ['cheshire'], sort => 'asc', order => 'tag' );
