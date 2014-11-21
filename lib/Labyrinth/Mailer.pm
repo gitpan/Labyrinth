@@ -5,7 +5,7 @@ use strict;
 use utf8;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.27';
+$VERSION = '5.28';
 
 =head1 NAME
 
@@ -157,13 +157,8 @@ sub MailSent {
     return $mailer{result};
 }
 
-
 sub HTMLSend {
     my %hash  = @_;
-
-    my $ref = Transform($hash{html},$hash{vars});
-    my $html = $ref;
-
 
     MIME::Lite->send('smtp', $settings{smtp}, Timeout=>60);
 #    MIME::Lite->send('sendmail', "$settings{mailsend} $hash{to}", Timeout=>60);
@@ -180,10 +175,33 @@ sub HTMLSend {
         return;
     }
 
-    $mail->attach(
-        Type => 'text/html',
-        Data => $html
-    );
+    if($hash{text}) {
+        my $ref = Transform($hash{text},$hash{vars});
+        my $text = $ref;
+
+        $mail->attach(
+            Type => 'text/text',
+            Data => $text
+        )   if($text);
+    }
+
+    if($hash{html}) {
+        my $ref = Transform($hash{html},$hash{vars});
+        my $html = $ref;
+
+
+        for my $path ($html =~ m!href="([^"]+)"!g) {
+            next if($path =~ m!$settings{protregex}!);
+            my $newpath = "$settings{docroot}/$settings{webpath}/$path";
+            $newpath =~ s!//+!/!g;
+            $path =~ s!href="$path"!href="$newpath"!g;
+        }
+
+        $mail->attach(
+            Type => 'text/html',
+            Data => $html
+        )   if($html);
+    }
 
     for(@{$hash{attach}}) {
         if(/\.pdf$/i) {

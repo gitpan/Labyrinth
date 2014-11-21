@@ -1,11 +1,18 @@
 Changes for the Labyrinth Core
 ==============================
 
+5.28    2014-11-21
+        - protocol now a setting variable (Variables).
+        - multipart mails now include text and html parts, as well as 
+          attachments (Mailer).
+        - updated prerequisites.
+
+5.27    2014-10-26
         - disabled SQLite tests for users.
         - fixed SQL syntax for SQLite.
         - disabled SQLite tests due issues with Test-Database/YAML-Tiny.
 
-5.27    2014-10-26
+5.26    2014-10-26
         - prevent strings being used as numeric options (MLUtils).
         - fixed MetaData sort order in search tests (Metadata).
         - fixed protocol match to exclude non-alphabetics (Globals).

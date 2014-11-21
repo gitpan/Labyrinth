@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.27';
+$VERSION = '5.28';
 
 =head1 NAME
 
@@ -55,7 +55,6 @@ require Exporter;
 # Library Modules
 
 use Config::IniFiles;
-use Cwd;
 use Data::Dumper;
 use Data::FormValidator;
 use Data::FormValidator::Constraints::Upload;
