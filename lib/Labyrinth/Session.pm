@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION @ISA %EXPORT_TAGS @EXPORT @EXPORT_OK);
-$VERSION = '5.28';
+$VERSION = '5.29';
 
 =head1 NAME
 
@@ -41,8 +41,6 @@ require Exporter;
 # -------------------------------------
 # Library Modules
 
-use Digest::MD5 qw(md5_base64);
-
 use Labyrinth::Audit;
 use Labyrinth::Globals;
 use Labyrinth::DTUtils;
@@ -50,6 +48,8 @@ use Labyrinth::CookieLib;
 use Labyrinth::Mailer;
 use Labyrinth::Users;
 use Labyrinth::Variables;
+
+use Session::Token;
 
 # -------------------------------------
 # Variables
@@ -523,11 +523,8 @@ sub DESTROY {}
 # Internal Functions
 
 sub _create_session_key {
-    my $key = shift || '';
-    my $string = $key . formatDate(0) . $$;
-    my $md5 = md5_base64($string);
-    $md5 =~ s![+/]!('a'..'z',0..9)[int(rand(36))]!eg;               # cookies can only handle \w characters
-    return $md5;
+    my $gen = Session::Token->new(length => 24);
+    return $gen->get();
 }
 
 sub _get_session {

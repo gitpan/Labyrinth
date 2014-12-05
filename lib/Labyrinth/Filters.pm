@@ -3,8 +3,8 @@ package Labyrinth::Filters;
 use warnings;
 use strict;
 
-use vars qw( $VERSION $AUTOLOAD );
-$VERSION = '5.28';
+use vars qw( $VERSION $AUTOLOAD @ISA %EXPORT_TAGS @EXPORT_OK @EXPORT );
+$VERSION = '5.29';
 
 =head1 NAME
 
@@ -15,6 +15,18 @@ Labyrinth::Filters - Basic Filters Handler for Labyrinth
 Provides basic filter methods used within Labyrinth.
 
 =cut
+
+# -------------------------------------
+# Export Details
+
+require Exporter;
+@ISA       = qw(Exporter);
+%EXPORT_TAGS = (
+    'all' => [ qw( float2 float3 float5 ) ]
+);
+
+@EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+@EXPORT    = ( @{ $EXPORT_TAGS{'all'} } );
 
 #----------------------------------------------------------------------------
 # Libraries
